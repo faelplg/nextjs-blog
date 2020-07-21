@@ -3,7 +3,7 @@ import styles from './layout.module.css';
 import utilStyles from '../styles/utils.module.css';
 import Link from 'next/link';
 
-const name = 'Rafael Goulart';
+const name = 'Mini blog';
 export const siteTitle = 'Next.js Blog';
 
 const Layout = ({children, home}) => {
