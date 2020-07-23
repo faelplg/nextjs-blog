@@ -7,24 +7,29 @@ import html from 'remark-html';
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
+function readMarkdown(fileName: string) {
+  const id = fileName.replace(/\.md$/, '');
+
+  // Read markdown file as string
+  const fullPath = path.join(postsDirectory, fileName);
+  const fileContents = fs.readFileSync(fullPath, 'utf8');
+
+  // Use gray-matter to parse the post metadata section
+  const matterResult = matter(fileContents);
+  return { id, matterResult };
+}
+
 // List posts on home page
 export function getSortedPostsData() {
   // Get file names under /posts
   const fileNames = fs.readdirSync(postsDirectory);
   const allPostsData = fileNames.map((fileName) => {
     // Remove ".md" from file name to get id
-    const id = fileName.replace(/\.md$/, '');
-
-    // Read markdown file as string
-    const fullPath = path.join(postsDirectory, fileName);
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
-
-    // Use gray-matter to parse the post metadata section
-    const matterResult = matter(fileContents);
+    const { id, matterResult } = readMarkdown(fileName);
 
     return {
       id,
-      ...matterResult.data,
+      ...matterResult.data as {date: string; title: string},
     };
   });
   // Sort posts by date
@@ -59,7 +64,7 @@ export function getAllPostIds() {
 }
 
 // Get post data
-export async function getPostData(id) {
+export async function getPostData(id: any) {
   const fullPath = path.join(postsDirectory, `${id}.md`);
   const fileContents = fs.readFileSync(fullPath, 'utf8');
 
