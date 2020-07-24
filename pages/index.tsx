@@ -5,8 +5,17 @@ import Date from '../components/date';
 import utilStyles from '../styles/utils.module.css';
 
 import {getSortedPostsData} from '../lib/posts';
+import {GetStaticProps} from 'next';
 
-export default function Home({allPostsData}) {
+interface AllPostsData {
+  allPostsData: {
+    date: string;
+    title: string;
+    id: string;
+  }[];
+}
+
+export default function Home({allPostsData}: AllPostsData) {
   return (
     <Layout home>
       <Head>
@@ -46,7 +55,7 @@ export default function Home({allPostsData}) {
   );
 }
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps = async () => {
   const allPostsData = getSortedPostsData();
   // console.log('DEBUG: on index.js[getStaticProps] - allPostsData:');
   // console.log(allPostsData);
@@ -55,4 +64,4 @@ export async function getStaticProps() {
       allPostsData,
     },
   };
-}
+};

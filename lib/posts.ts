@@ -5,6 +5,12 @@ import matter from 'gray-matter';
 import remark from 'remark';
 import html from 'remark-html';
 
+interface Posts {
+  date: string;
+  id: string;
+  title: string;
+}
+
 const postsDirectory = path.join(process.cwd(), 'posts');
 
 function readMarkdown(fileName: string) {
@@ -16,20 +22,20 @@ function readMarkdown(fileName: string) {
 
   // Use gray-matter to parse the post metadata section
   const matterResult = matter(fileContents);
-  return { id, matterResult };
+  return {id, matterResult};
 }
 
 // List posts on home page
 export function getSortedPostsData() {
   // Get file names under /posts
   const fileNames = fs.readdirSync(postsDirectory);
-  const allPostsData = fileNames.map((fileName) => {
+  const allPostsData: Posts[] = fileNames.map((fileName) => {
     // Remove ".md" from file name to get id
-    const { id, matterResult } = readMarkdown(fileName);
+    const {id, matterResult} = readMarkdown(fileName);
 
     return {
       id,
-      ...matterResult.data as {date: string; title: string},
+      ...(matterResult.data as {date: string; title: string}),
     };
   });
   // Sort posts by date
@@ -64,7 +70,7 @@ export function getAllPostIds() {
 }
 
 // Get post data
-export async function getPostData(id: any) {
+export async function getPostData(id: string) {
   const fullPath = path.join(postsDirectory, `${id}.md`);
   const fileContents = fs.readFileSync(fullPath, 'utf8');
 
@@ -79,6 +85,6 @@ export async function getPostData(id: any) {
   return {
     id,
     contentHtml,
-    ...matterResult.data,
+    ...(matterResult.data as {date: string; title: string}),
   };
 }
